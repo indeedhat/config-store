@@ -1,0 +1,22 @@
+path:
+    home: /home/indeedhat
+    store: ./store
+
+remote:
+    url: https://github.com/indeedhat/config-store
+    branch: laptop
+
+files:
+    home:
+        - .i3
+        - .includes
+        - .scripts
+        - .ssh
+        - .config/nvim
+        - .config/i3blocks
+        - .config/ranger
+        - .bashrc
+        - .bash_profile
+    absolute:
+        - /etc/crontab
+        - /etc/php.ini
