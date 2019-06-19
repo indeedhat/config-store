@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+	"path"
+)
 
 type RestoreCommand struct {
 	Help           bool   `gli:"^help,h"`
@@ -12,6 +16,8 @@ type RestoreCommand struct {
 }
 
 func (cmd *RestoreCommand) Run() int {
+	loggerEnabled = cmd.Verbose
+
 	config, err := config(cmd.ConfigPath)
 	if nil != err {
 		fmt.Printf("Failed to load config %s", cmd.ConfigPath)
@@ -38,7 +44,46 @@ func (cmd *RestoreCommand) NeedHelp() bool {
 }
 
 func restoreFiles(config *AppConfig, overwrite, ignoreExisting, verbose bool) error {
-	// TODO: implement
+	if 0 == len(config.Files.Home) {
+		logf("no files in the home directory")
+	} else {
+		for _, file := range config.Files.Home {
+			source := path.Join(config.Path.Store, file)
+			destination := path.Join(config.Path.Home, file)
+			if _, err := os.Stat(source); os.IsExist(err) {
+				logf("not found in store: %s", source)
+				continue
+			}
+
+			logf("%s -> %s", source, destination)
+
+			if err := copyR(source, destination, overwrite, ignoreExisting); nil != err {
+				return err
+			}
+		}
+	}
+
+	if 0 == len(config.Files.Absolute) {
+		if verbose {
+			logf("no absolute file paths")
+		}
+	} else {
+		for _, file := range config.Files.Absolute {
+			source := file
+			destination := path.Join(config.Path.Store, file)
+			if _, err := os.Stat(source); os.IsExist(err) {
+				logf("not found in store: %s", source)
+				continue
+			}
+
+			logf("%s -> %s", source, destination)
+
+			if err := copyR(source, destination, overwrite, ignoreExisting); nil != err {
+				return err
+			}
+		}
+	}
+
 	return nil
 }
 
