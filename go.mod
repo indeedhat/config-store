@@ -1,6 +1,6 @@
 module configstore
 
 require (
-	github.com/go-errors/errors v1.0.1 // indirect
-	github.com/indeedhat/gli v0.0.0-20181108225235-6644b1d4c091
+	github.com/indeedhat/gli v0.0.0-20190619205629-8cfe00d92e3a
+	gopkg.in/yaml.v2 v2.2.2
 )

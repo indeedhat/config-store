@@ -1,4 +1,8 @@
 github.com/go-errors/errors v1.0.1 h1:LUHzmkK3GUKUrL/1gfBUxAHzcev3apQlezX/+O7ma6w=
 github.com/go-errors/errors v1.0.1/go.mod h1:f4zRHt4oKfwPJE5k8C9vpYG+aDHdBFUsgrm6/TyX73Q=
-github.com/indeedhat/gli v0.0.0-20181108225235-6644b1d4c091 h1:YUsX7cywXnOER7Cm4PkFI9zRUerXbnfjnVU9YV3fi48=
-github.com/indeedhat/gli v0.0.0-20181108225235-6644b1d4c091/go.mod h1:vEJ/oLazgpwMhk6k1Us2eBldY3oXCEOV61xNetO+01k=
+github.com/indeedhat/gli v0.0.0-20190619205629-8cfe00d92e3a h1:UIN+0/e+T6W785/eFYigEbb9p1aYx+A/iS4bWne1HYw=
+github.com/indeedhat/gli v0.0.0-20190619205629-8cfe00d92e3a/go.mod h1:ICIu6TKtSB0jlzOOdKlEG0WJjyBms+W6bKU3p81o+7g=
+gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=
+gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
+gopkg.in/yaml.v2 v2.2.2 h1:ZCJp+EgiOT7lHqUV2J862kp8Qj64Jo6az82+3Td9dZw=
+gopkg.in/yaml.v2 v2.2.2/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=

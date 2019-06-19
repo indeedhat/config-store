@@ -5,8 +5,8 @@ import "github.com/indeedhat/gli"
 var app *gli.App
 
 type ConfigClone struct {
-	Store   StoreCommand   `gli:"store" description:"Collect config files and store them remotely"`
-	Restore RestoreCommand `gli:"restore" description:"restore config files from the store"`
+	Store   StoreCommand   `gli:"store,s" description:"Collect config files and store them remotely"`
+	Restore RestoreCommand `gli:"restore,r" description:"restore config files from the store"`
 }
 
 func (c *ConfigClone) Run() int {
