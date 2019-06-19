@@ -18,7 +18,7 @@ func copyR(source, destination string, overwrite, ignoreExisting bool) error {
 		return copyDirectory(source, destination, overwrite, ignoreExisting)
 	}
 
-	if err = copyFile(source, destination, overwrite); nil != err && (!ignoreExisting && isFileExistsError(err)) {
+	if err = copyFile(source, destination, overwrite); nil != err && (!ignoreExisting && os.IsExist(err)) {
 		return err
 	}
 
@@ -27,8 +27,8 @@ func copyR(source, destination string, overwrite, ignoreExisting bool) error {
 
 func copyFile(source, destination string, overwrite bool) error {
 	_, err := os.Stat(destination)
-	if nil == err && overwrite {
-		return &FileExistsError{"Destination file exists", destination}
+	if nil == err && !overwrite {
+		return os.ErrExist
 	}
 
 	src, err := os.Open(source)
@@ -51,10 +51,12 @@ func copyDirectory(source, destination string, overwrite, ignoreExisting bool) e
 	_, err := os.Stat(destination)
 	if nil == err && overwrite {
 		os.RemoveAll(destination)
-	} else if os.IsNotExist(err) {
-		os.MkdirAll(destination, 0644)
-	} else if nil == err && ignoreExisting {
-		return &FileExistsError{"Destination dir exists", destination}
+	} else if nil == err && !ignoreExisting {
+		return os.ErrExist
+	}
+
+	if nil == err || os.IsNotExist(err) {
+		os.MkdirAll(destination, 0744)
 	}
 
 	files, err := ioutil.ReadDir(source)
@@ -65,7 +67,7 @@ func copyDirectory(source, destination string, overwrite, ignoreExisting bool) e
 	for _, file := range files {
 		src := filepath.Join(source, file.Name())
 		dst := filepath.Join(destination, file.Name())
-		if err := copyR(src, dst, overwrite, ignoreExisting); nil != err && (!ignoreExisting && isFileExistsError(err)) {
+		if err := copyR(src, dst, overwrite, ignoreExisting); nil != err && (!ignoreExisting && os.IsExist(err)) {
 			return err
 		}
 	}

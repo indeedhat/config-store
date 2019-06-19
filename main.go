@@ -13,5 +13,6 @@ func (c *ConfigClone) Run() int {
 
 func main() {
 	app := gli.NewApplication(&ConfigClone{}, "Config Clone")
+	
 	app.Run()
 }
