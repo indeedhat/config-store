@@ -1,4 +1,4 @@
-package configstore
+package main
 
 type FileExistsError struct {
 	err  string

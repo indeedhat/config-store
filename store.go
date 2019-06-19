@@ -1,4 +1,4 @@
-package configstore
+package main
 
 type StoreCommand struct {
 	Help       bool   `gli:"^help,h"`
