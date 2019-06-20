@@ -1,6 +1,8 @@
 package main
 
-import "path"
+import (
+	"path"
+)
 
 type StoreCommand struct {
 	Help           bool   `gli:"^help,h"`
@@ -12,7 +14,9 @@ type StoreCommand struct {
 }
 
 func (cmd *StoreCommand) Run() int {
-	loggerEnabled = cmd.Verbose
+	if cmd.Verbose {
+		loggingLevel = loggingLevel | LOG_VERBOSE
+	}
 
 	config, err := config(cmd.ConfigPath)
 	if nil != err {
@@ -41,13 +45,13 @@ func (cmd *StoreCommand) NeedHelp() bool {
 
 func storeFiles(config *AppConfig, overwrite, ignoreExisting, verbose bool) error {
 	if 0 == len(config.Files.Home) {
-		logf("no files in the home directory")
+		logInfo("no files in the home directory")
 	} else {
 		for _, file := range config.Files.Home {
 			source := path.Join(config.Path.Home, file)
 			destination := path.Join(config.Path.Store, file)
 
-			logf("%s -> %s", source, destination)
+			logVerbose("%s -> %s", source, destination)
 
 			if err := copyR(source, destination, overwrite, ignoreExisting); nil != err {
 				return err
@@ -56,13 +60,13 @@ func storeFiles(config *AppConfig, overwrite, ignoreExisting, verbose bool) erro
 	}
 
 	if 0 == len(config.Files.Absolute) {
-		logf("no absolute file paths")
+		logInfo("no absolute file paths")
 	} else {
 		for _, file := range config.Files.Absolute {
 			source := file
 			destination := path.Join(config.Path.Store, file)
 
-			logf("%s -> %s", source, destination)
+			logVerbose("%s -> %s", source, destination)
 
 			if err := copyR(source, destination, overwrite, ignoreExisting); nil != err {
 				return err

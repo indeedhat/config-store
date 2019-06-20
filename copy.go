@@ -20,6 +20,8 @@ func copyR(source, destination string, overwrite, ignoreExisting bool) error {
 
 	if err = copyFile(source, destination, overwrite); nil != err && (!ignoreExisting && os.IsExist(err)) {
 		return err
+	} else {
+		logIgnoredError(err)
 	}
 
 	return nil
@@ -29,6 +31,8 @@ func copyFile(source, destination string, overwrite bool) error {
 	_, err := os.Stat(destination)
 	if nil == err && !overwrite {
 		return os.ErrExist
+	} else {
+		logIgnoredError(err)
 	}
 
 	src, err := os.Open(source)
@@ -53,6 +57,8 @@ func copyDirectory(source, destination string, overwrite, ignoreExisting bool) e
 		os.RemoveAll(destination)
 	} else if nil == err && !ignoreExisting {
 		return os.ErrExist
+	} else {
+		logIgnoredError(err)
 	}
 
 	if nil == err || os.IsNotExist(err) {
@@ -69,6 +75,8 @@ func copyDirectory(source, destination string, overwrite, ignoreExisting bool) e
 		dst := filepath.Join(destination, file.Name())
 		if err := copyR(src, dst, overwrite, ignoreExisting); nil != err && (!ignoreExisting && os.IsExist(err)) {
 			return err
+		} else {
+			logIgnoredError(err)
 		}
 	}
 

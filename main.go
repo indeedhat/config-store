@@ -1,6 +1,10 @@
 package main
 
-import "github.com/indeedhat/gli"
+import (
+	"os"
+
+	"github.com/indeedhat/gli"
+)
 
 var app *gli.App
 
@@ -15,6 +19,10 @@ func (c *ConfigClone) Run() int {
 }
 
 func main() {
+	if "" != os.Getenv("DEBUG") {
+		loggingLevel = LOG_DEBUG | LOG_ERROR | LOG_INFO | LOG_VERBOSE
+	}
+
 	app = gli.NewApplication(&ConfigClone{}, "Config Clone")
 	app.Run()
 }

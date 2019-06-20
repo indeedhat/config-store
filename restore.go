@@ -16,7 +16,9 @@ type RestoreCommand struct {
 }
 
 func (cmd *RestoreCommand) Run() int {
-	loggerEnabled = cmd.Verbose
+	if cmd.Verbose {
+		loggingLevel = loggingLevel | LOG_VERBOSE
+	}
 
 	config, err := config(cmd.ConfigPath)
 	if nil != err {
@@ -45,17 +47,17 @@ func (cmd *RestoreCommand) NeedHelp() bool {
 
 func restoreFiles(config *AppConfig, overwrite, ignoreExisting, verbose bool) error {
 	if 0 == len(config.Files.Home) {
-		logf("no files in the home directory")
+		logInfo("no files in the home directory")
 	} else {
 		for _, file := range config.Files.Home {
 			source := path.Join(config.Path.Store, file)
 			destination := path.Join(config.Path.Home, file)
 			if _, err := os.Stat(source); os.IsExist(err) {
-				logf("not found in store: %s", source)
+				logVerbose("not found in store: %s", source)
 				continue
 			}
 
-			logf("%s -> %s", source, destination)
+			logVerbose("%s -> %s", source, destination)
 
 			if err := copyR(source, destination, overwrite, ignoreExisting); nil != err {
 				return err
@@ -65,18 +67,18 @@ func restoreFiles(config *AppConfig, overwrite, ignoreExisting, verbose bool) er
 
 	if 0 == len(config.Files.Absolute) {
 		if verbose {
-			logf("no absolute file paths")
+			logInfo("no absolute file paths")
 		}
 	} else {
 		for _, file := range config.Files.Absolute {
 			source := file
 			destination := path.Join(config.Path.Store, file)
 			if _, err := os.Stat(source); os.IsExist(err) {
-				logf("not found in store: %s", source)
+				logVerbose("not found in store: %s", source)
 				continue
 			}
 
-			logf("%s -> %s", source, destination)
+			logVerbose("%s -> %s", source, destination)
 
 			if err := copyR(source, destination, overwrite, ignoreExisting); nil != err {
 				return err
