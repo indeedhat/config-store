@@ -5,6 +5,8 @@ path:
 remote:
     url: https://github.com/indeedhat/config-store
     branch: laptop
+    user: indeedhat
+    email: noreply@phpmatt.com
 
 files:
     home:

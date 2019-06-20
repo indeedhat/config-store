@@ -35,6 +35,9 @@ func copyFile(source, destination string, overwrite bool) error {
 		logIgnoredError(err)
 	}
 
+	logVerbose("making dir %s", filepath.Dir(destination))
+	_ = os.MkdirAll(filepath.Dir(destination), os.ModePerm)
+
 	src, err := os.Open(source)
 	if nil != err {
 		return err
@@ -57,8 +60,6 @@ func copyDirectory(source, destination string, overwrite, ignoreExisting bool) e
 		os.RemoveAll(destination)
 	} else if nil == err && !ignoreExisting {
 		return os.ErrExist
-	} else {
-		logIgnoredError(err)
 	}
 
 	if nil == err || os.IsNotExist(err) {

@@ -14,6 +14,8 @@ type AppConfig struct {
 		URL    string `yaml:"url"`
 		Branch string
 		Token  string
+		User   string
+		Email  string
 	}
 	Files struct {
 		Home     []string `yaml:",flow"`
