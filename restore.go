@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"os"
 	"path"
+
+	"gopkg.in/src-d/go-git.v4"
+	"gopkg.in/src-d/go-git.v4/plumbing/transport/http"
 )
 
 type RestoreCommand struct {
@@ -90,6 +93,36 @@ func restoreFiles(config *AppConfig, overwrite, ignoreExisting, verbose bool) er
 }
 
 func pullFromRenote(config *AppConfig, verbose bool) error {
-	// TODO: implement
+	repo, workTree, err := openRepo(config)
+	if nil != err {
+		return err
+	}
+
+	if err := checkoutBranch(workTree, config); nil != err {
+		return err
+	}
+
+	status, err := workTree.Status()
+	if nil != err {
+		logErrorf("Failed to get status %s", err)
+		return err
+	}
+
+	if !status.IsClean() {
+		logVerbose("cannot pull, repo has unstaged changes")
+		return nil
+	}
+
+	err = workTree.Pull(&git.PullOptions{
+		Auth: &http.BasicAuth{
+			Username: config.Remote.User,
+			Password: config.Remote.Token,
+		},
+	})
+	if nil != err {
+		logErrorf("failed to pull from remote %s", err)
+		return err
+	}
+
 	return nil
 }
