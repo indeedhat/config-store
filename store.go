@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"path"
 	"time"
 
@@ -29,13 +30,18 @@ func (cmd *StoreCommand) Run() int {
 		return CODE_CONFIG_ERROR
 	}
 
-	if err := storeFiles(config, cmd.Overwrite, cmd.IgnoreExisting, cmd.Verbose); nil != err {
+	repo, workTree, err := openRepoForWrite(config)
+	if nil != err {
+		return CODE_REMOTE_ERROR
+	}
+
+	if err := storeFiles(config, cmd.Overwrite, cmd.IgnoreExisting); nil != err {
 		logErrorf("Failed to store files")
 		return CODE_STORE_ERROR
 	}
 
 	if cmd.PushConfig {
-		if err := pushToRemote(config, cmd.Verbose); nil != err {
+		if err := pushToRemote(repo, workTree, config); nil != err {
 			logErrorf("Failed to push to remote server")
 			return CODE_REMOTE_ERROR
 		}
@@ -48,7 +54,7 @@ func (cmd *StoreCommand) NeedHelp() bool {
 	return cmd.Help
 }
 
-func storeFiles(config *AppConfig, overwrite, ignoreExisting, verbose bool) error {
+func storeFiles(config *AppConfig, overwrite, ignoreExisting bool) error {
 	if 0 == len(config.Files.Home) {
 		logInfo("no files in the home directory")
 	} else {
@@ -82,19 +88,20 @@ func storeFiles(config *AppConfig, overwrite, ignoreExisting, verbose bool) erro
 	return nil
 }
 
-func pushToRemote(config *AppConfig, verbose bool) error {
-	repo, err := git.PlainOpen(config.Path.Store)
+func openRepoForWrite(config *AppConfig) (*git.Repository, *git.Worktree, error) {
+	repo, workTree, err := openRepo(config)
 	if nil != err {
-		logErrorf("Failed to ope repo %s", err)
-		return err
+		return nil, nil, err
 	}
 
-	workTree, err := repo.Worktree()
-	if nil != err {
-		logErrorf("Failed to open worktree %s", err)
-		return err
+	if err := checkoutBranch(workTree, config); nil != err {
+		return nil, nil, err
 	}
 
+	return repo, workTree, nil
+}
+
+func pushToRemote(repo *git.Repository, workTree *git.Worktree, config *AppConfig) error {
 	status, err := workTree.Status()
 	if nil != err {
 		logErrorf("Failed to get status %s", err)
@@ -125,12 +132,14 @@ func pushToRemote(config *AppConfig, verbose bool) error {
 	}
 
 	options := &git.PushOptions{
-		Auth: &http.TokenAuth{
-			Token: config.Remote.Token,
+		Auth: &http.BasicAuth{
+			Username: config.Remote.User,
+			Password: config.Remote.Token,
 		},
+		Progress: os.Stdout,
 	}
 	if err := repo.Push(options); nil != err {
-		logErrorf("Failed to push to remote %s", err)
+		logErrorf("Failed to push to remote: %s", err)
 		return err
 	}
 
