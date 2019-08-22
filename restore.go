@@ -93,7 +93,7 @@ func restoreFiles(config *AppConfig, overwrite, ignoreExisting, verbose bool) er
 }
 
 func pullFromRenote(config *AppConfig, verbose bool) error {
-	repo, workTree, err := openRepo(config)
+	_, workTree, err := openRepo(config)
 	if nil != err {
 		return err
 	}

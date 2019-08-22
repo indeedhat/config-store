@@ -8,34 +8,6 @@ import (
 	"testing"
 )
 
-const (
-	t_SRC = "testdata/src"
-	t_DST = "testdata/dst"
-)
-
-func setup() {
-	// tearing down before test rather than after allows for visual inspection if things go wrong
-	teardown()
-
-	if err := os.MkdirAll(t_DST, os.ModePerm); nil != err {
-		panic(err)
-	}
-}
-
-func teardown() {
-	if _, err := os.Stat(t_DST); nil != err || !os.IsNotExist(err) {
-		_ = os.RemoveAll(t_DST)
-	}
-}
-
-func TestMain(m *testing.M) {
-	setup()
-
-	code := m.Run()
-
-	os.Exit(code)
-}
-
 func TestCopyFile(t *testing.T) {
 	src := path.Join(t_SRC, "file_1")
 	dst := path.Join(t_DST, "file_1")

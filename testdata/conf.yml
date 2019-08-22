@@ -1,0 +1,19 @@
+path:
+    home: /home/indeedhat
+    store: ./store
+
+remote:
+    url: https://github.com/indeedhat/config-store
+    branch: laptop
+    user: indeedhat
+    email: noreply@phpmatt.com
+    token: somefaketoken
+
+files:
+    home:
+        - .i3
+        - .bashrc
+        - .bash_profile
+    absolute:
+        - /etc/crontab
+        - /etc/php.ini
