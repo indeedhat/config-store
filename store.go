@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"os/exec"
 	"path"
 	"time"
 
@@ -113,7 +114,11 @@ func pushToRemote(repo *git.Repository, workTree *git.Worktree, config *AppConfi
 		return nil
 	}
 
-	_, err = workTree.Add(".")
+	// TODO: fix this when they fix the Add method
+	// _, err = workTree.Add(".")
+	cmd := exec.Command("git", "add", ".")
+	cmd.Dir = workTree.Filesystem.Root()
+	err = cmd.Run()
 	if err != nil {
 		logErrorf("Failed to add files to repo %s", err)
 	}
